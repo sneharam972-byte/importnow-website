@@ -404,5 +404,85 @@ document.getElementById('menuToggle').addEventListener('click',()=>{const nav=do
 document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('navLinks').classList.remove('open');document.getElementById('menuToggle').setAttribute('aria-expanded','false');}));
 document.querySelector('.mobile-drawer-quote').addEventListener('click',()=>{document.getElementById('navLinks').classList.remove('open');document.getElementById('menuToggle').setAttribute('aria-expanded','false');});
 </script>
+<style>#heroVisual{display:none !important}</style>
+<!-- 3D GLOBE START -->
+<script src="https://unpkg.com/globe.gl"></script>
+<script>
+window.addEventListener('load', function () {
+  var hero = document.querySelector('.hero');
+  if (!hero || !window.Globe) return;
+  hero.style.isolation = 'isolate';
+
+  var box = document.createElement('div');
+  var small = window.innerWidth < 800;
+  box.style.cssText = small
+    ? 'position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.4;'
+    : 'position:absolute;top:0;bottom:0;right:-8%;width:62%;z-index:-1;pointer-events:none;';
+  hero.appendChild(box);
+
+  var china = [
+    {name:'Shanghai', lat:31.23, lng:121.47, c:'#ff4d2e'},
+    {name:'Yiwu', lat:29.31, lng:120.08, c:'#ff4d2e'},
+    {name:'Guangzhou', lat:23.13, lng:113.26, c:'#ff4d2e'},
+    {name:'Shenzhen', lat:22.54, lng:114.06, c:'#ff4d2e'}
+  ];
+  var india = [
+    {name:'Nhava Sheva', lat:18.95, lng:72.95, c:'#ffb347'},
+    {name:'Hyderabad', lat:17.38, lng:78.48, c:'#ffb347'},
+    {name:'Chennai', lat:13.08, lng:80.27, c:'#ffb347'}
+  ];
+  var arcs = [];
+  china.forEach(function (a) {
+    india.forEach(function (b) {
+      arcs.push({startLat:a.lat, startLng:a.lng, endLat:b.lat, endLng:b.lng});
+    });
+  });
+  var places = china.concat(india);
+
+  var g = Globe()(box)
+    .width(box.clientWidth)
+    .height(box.clientHeight)
+    .backgroundColor('rgba(0,0,0,0)')
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+    .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+    .showAtmosphere(true)
+    .atmosphereColor('#4f8cff')
+    .atmosphereAltitude(0.22)
+    .arcsData(arcs)
+    .arcColor(function () { return ['#ff4d2e', '#ffb347']; })
+    .arcStroke(0.45)
+    .arcAltitudeAutoScale(0.4)
+    .arcDashLength(0.4)
+    .arcDashGap(0.2)
+    .arcDashAnimateTime(2500)
+    .pointsData(places)
+    .pointLat('lat').pointLng('lng')
+    .pointColor('c')
+    .pointAltitude(0.01)
+    .pointRadius(0.45)
+    .labelsData(places)
+    .labelLat('lat').labelLng('lng')
+    .labelText('name')
+    .labelSize(1.1)
+    .labelDotRadius(0.35)
+    .labelColor(function () { return '#ffffff'; })
+    .ringsData(india)
+    .ringLat('lat').ringLng('lng')
+    .ringColor(function () { return function (t) { return 'rgba(255,160,70,' + (1 - t) + ')'; }; })
+    .ringMaxRadius(4)
+    .ringPropagationSpeed(2)
+    .ringRepeatPeriod(1200);
+
+  g.pointOfView({lat:22, lng:90, altitude:2.1});
+  g.controls().autoRotate = true;
+  g.controls().autoRotateSpeed = 0.6;
+  g.controls().enableZoom = false;
+
+  window.addEventListener('resize', function () {
+    g.width(box.clientWidth).height(box.clientHeight);
+  });
+});
+</script>
+<!-- 3D GLOBE END -->
 </body>
 </html>
